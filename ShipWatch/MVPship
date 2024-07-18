@@ -1,0 +1,23 @@
+#!/bin/bash
+rm index.html
+rm -r ola
+mkdir ola
+rm teliko.txt
+wget 'https://prometheus.dmst.aueb.gr/datamines/'
+for fn in $(grep .zip index.html|grep -v detf|cut -d "\"" -f 6)
+do
+wget 'https://prometheus.dmst.aueb.gr/datamines/'$fn
+ar=$(echo $fn|cut -d "e" -f 2|cut -d "." -f 1)
+mkdir ola/arxeio$ar
+unzip -d ~/ShipProject/ShipWatch/ola/arxeio$ar $fn
+rm $fn
+
+tail -n +2 ola/arxeio$ar/AIS_ASCII_by_UTM_Month/2015/AIS_2015_01_Zone$ar'.csv' > ola/arxeio$ar/AIS_ASCII_by_UTM_Month/2015/AIS_2015_01_Zone$ar'.csv'.tmp && mv ola/arxeio$ar/AIS_ASCII_by_UTM_Month/2015/AIS_2015_01_Zone$ar'.csv'.tmp ola/arxeio$ar/AIS_ASCII_by_UTM_Month/2015/AIS_2015_01_Zone$ar'.csv'
+#cp ShipAnalyser FindEarthDistance.m FindShipDistance ShipDistance.m BestShip ola/arxeio$ar
+
+bash ShipAnalyser ola/arxeio$ar/AIS_ASCII_by_UTM_Month/2015/AIS_2015_01_Zone$ar'.csv'
+bash BestShip>>teliko.txt
+done
+tt=$(cat teliko.txt|cut -d "," -f 2|sort -gr|head -n 1)
+kk=$(grep $tt teliko.txt|cut -d "," -f 1)
+echo "$kk,$tt"

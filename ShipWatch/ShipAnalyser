@@ -1,0 +1,21 @@
+#usage: ShipAnalyser  filename.csv 
+# This bash script will analyse a standard AIS file and will produce a seperate file for each ship 
+# with latitude longitude comma seperated columns
+# $1 contains the first parameter passed from commandline = filename.csv
+
+# I just want to have a file containing ShipName and IMO 
+cut -f 8,9 -d "," $1 | sort | uniq >shipsNAME-IMO.txt
+
+# I need to have a full list of all ships IMO 
+cut -f 9 -d "," $1 | sort | uniq >shipsIMO.txt
+
+# All results will be in a fresh PerShip Catalog
+rm -rf PerShip
+mkdir PerShip
+
+
+for ship in $(cat shipsIMO.txt) #For all ships appearing in file shipsIMO.txt
+do
+#echo Analyzing ship $(grep $ship shipsNAME-IMO.txt)
+grep $ship  $1 |sort | cut -f 3,4 -d ","  > PerShip/$ship.csv
+done
